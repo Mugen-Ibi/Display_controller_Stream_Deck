@@ -176,6 +176,6 @@ test("unselected and non-finite input never writes hardware", async () => {
 
 test("settings from profiles are validated at the trust boundary", () => {
   assert.deepEqual(settingsOf({ step: NaN, pressStep: 1000, preset: -20 }), {
-    monitorId: "", monitorName: "Display", step: 2, pressStep: 25, preset: 0,
+    monitorId: "", monitorName: "Display", step: 2, pressStep: 25, preset: 0, buttonMode: "increase",
   });
 });

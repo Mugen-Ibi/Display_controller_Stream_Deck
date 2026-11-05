@@ -26,6 +26,7 @@ export type Settings = {
   step?: number;
   pressStep?: number;
   preset?: number;
+  buttonMode?: "increase" | "decrease" | "preset";
 };
 
 export const clamp = (value: number): number => Math.max(0, Math.min(100, value));
@@ -41,5 +42,6 @@ export function settingsOf(input: Settings): Required<Settings> {
     step: bounded(input.step, 2, 1, 20),
     pressStep: bounded(input.pressStep, 10, 1, 25),
     preset: bounded(input.preset, 50, 0, 100),
+    buttonMode: input.buttonMode === "decrease" || input.buttonMode === "preset" ? input.buttonMode : "increase",
   };
 }

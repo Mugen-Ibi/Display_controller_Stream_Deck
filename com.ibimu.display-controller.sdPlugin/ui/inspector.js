@@ -4,6 +4,7 @@ let context;
 let actionId;
 let settings = {};
 let monitors = [];
+let controllerType = "Keypad";
 const byId = (id) => document.getElementById(id);
 const status = (text, error = false) => { byId("status").textContent = text; byId("status").classList.toggle("error", error); };
 const send = (event, payload) => {
@@ -14,6 +15,7 @@ window.connectElgatoStreamDeckSocket = (port, uuid, registerEvent, _info, action
   context = uuid;
   const action = JSON.parse(actionInfo);
   actionId = action.action;
+  controllerType = action.payload.controller || "Keypad";
   settings = action.payload.settings || {};
   renderSettings();
   socket = new WebSocket(`ws://127.0.0.1:${port}`);
@@ -54,6 +56,18 @@ window.connectElgatoStreamDeckSocket = (port, uuid, registerEvent, _info, action
 
 function renderSettings() {
   for (const [key, fallback] of [["step", 2], ["pressStep", 10], ["preset", 50]]) byId(key).value = settings[key] ?? fallback;
+  const isKey = controllerType === "Keypad";
+  const mode = ["decrease", "preset"].includes(settings.buttonMode) ? settings.buttonMode : "increase";
+  byId("buttonMode").value = mode;
+  byId("buttonModeField").hidden = !isKey;
+  byId("pressStepField").hidden = isKey;
+  byId("stepField").hidden = isKey && mode === "preset";
+  byId("presetField").hidden = isKey && mode !== "preset";
+  byId("touchHint").hidden = isKey;
+  byId("stepTitle").textContent = isKey ? "輝度の変更幅" : "通常の回転";
+  byId("stepHint").textContent = isKey ? "ボタンを1回押すごと" : "1目盛りあたり";
+  byId("presetTitle").textContent = isKey ? "プリセット輝度" : "押下プリセット";
+  byId("presetHint").textContent = isKey ? "ボタンでこの明るさへ" : "回さずに押して離す";
   renderMonitors();
 }
 function renderMonitors() {
@@ -76,6 +90,11 @@ function refresh() {
   send("sendToPlugin", { type: "refreshMonitors" });
 }
 byId("refresh").addEventListener("click", refresh);
+byId("buttonMode").addEventListener("change", () => {
+  settings = { ...settings, buttonMode: byId("buttonMode").value };
+  renderSettings();
+  send("setSettings", settings);
+});
 byId("monitor").addEventListener("change", () => {
   const monitor = monitors.find((m) => m.id === byId("monitor").value);
   settings = { ...settings, monitorId: monitor?.id || "", monitorName: monitor?.name || "Display" };

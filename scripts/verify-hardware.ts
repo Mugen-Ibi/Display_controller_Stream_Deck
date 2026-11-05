@@ -30,7 +30,7 @@ server.on("connection", (socket) => {
 const settings = { monitorId: monitor.id, monitorName: monitor.name, step, pressStep: step, preset: before.percent };
 const info = {
   application: { version: "7.6.1", platform: "windows", platformVersion: "10.0", language: "ja" },
-  plugin: { uuid: "com.ibimu.display-controller", version: "0.1.0.0" },
+  plugin: { uuid: "com.ibimu.display-controller", version: "0.2.0.0" },
   devicePixelRatio: 1,
   devices: [{ id: "test-deck", name: "Test Stream Deck +", type: 7, size: { columns: 4, rows: 2 } }],
   colors: { buttonPressedBackgroundColor: "#333333", buttonPressedBorderColor: "#333333", buttonPressedTextColor: "#ffffff", disabledColor: "#777777", highlightColor: "#00aaff", mouseDownColor: "#444444" },
@@ -51,6 +51,14 @@ function send(event: string, payload: Record<string, unknown> = {}) {
 }
 async function displayed(percent: number) {
   await waitFor(() => received.some((m) => m.event === "setFeedback" && m.payload?.value === `${Math.round(percent)}%`), `Expected ${percent}% feedback`);
+  received.length = 0;
+}
+function sendKey(event: string, buttonMode: "increase" | "decrease" | "preset") {
+  connection!.send(JSON.stringify({ event, context: "test-key", action: "com.ibimu.display-controller.brightness", device: "test-deck",
+    payload: { settings: { ...settings, buttonMode }, controller: "Keypad", isInMultiAction: false, coordinates: { column: 0, row: 0 } } }));
+}
+async function keyDisplayed(operation: string, percent: number) {
+  await waitFor(() => received.some((m) => m.event === "setTitle" && m.payload?.title === `${operation}\n${Math.round(percent)}%`), `Expected key ${operation} / ${percent}%`);
   received.length = 0;
 }
 try {
@@ -74,9 +82,29 @@ try {
   await displayed(before.percent);
   send("touchTap", { tapPos: [100, 50], hold: false });
   await displayed(before.percent);
+  const forward = direction > 0 ? "increase" : "decrease";
+  const reverse = direction > 0 ? "decrease" : "increase";
+  const forwardLabel = `${direction > 0 ? "+" : "−"}${step}%`;
+  const reverseLabel = `${direction > 0 ? "−" : "+"}${step}%`;
+  sendKey("willAppear", forward);
+  await keyDisplayed(forwardLabel, before.percent);
+  sendKey("keyDown", forward); sendKey("keyUp", forward);
+  await keyDisplayed(forwardLabel, before.percent + direction * step);
+  sendKey("didReceiveSettings", reverse);
+  await keyDisplayed(reverseLabel, before.percent + direction * step);
+  sendKey("keyDown", reverse); sendKey("keyUp", reverse);
+  await keyDisplayed(reverseLabel, before.percent);
+  sendKey("didReceiveSettings", forward);
+  await keyDisplayed(forwardLabel, before.percent);
+  sendKey("keyDown", forward);
+  await keyDisplayed(forwardLabel, before.percent + direction * step);
+  sendKey("didReceiveSettings", "preset");
+  await keyDisplayed(`→${Math.round(before.percent)}%`, before.percent + direction * step);
+  sendKey("keyDown", "preset");
+  await keyDisplayed(`→${Math.round(before.percent)}%`, before.percent);
   send("didReceiveSettings", { settings: { ...settings, monitorId: "disconnected-test-monitor" } });
   await waitFor(() => received.some((m) => m.event === "setFeedback" && m.payload?.value === "接続 / 設定を確認"), "Disconnected feedback");
-  console.log(JSON.stringify({ monitor: monitor.name, originalPercent: before.percent, range: [before.minimum, before.maximum], checks: ["SDK registration", "PI discovery", "dial rotation", "pressed rotation", "preset", "touch refresh", "disconnected display"] }, null, 2));
+  console.log(JSON.stringify({ monitor: monitor.name, originalPercent: before.percent, range: [before.minimum, before.maximum], checks: ["SDK registration", "PI discovery", "dial rotation", "pressed rotation", "preset", "touch refresh", "key increase", "key decrease", "key preset", "disconnected display"] }, null, 2));
 } finally {
   // Stop new polling / writes before restoring through a separate helper.
   const stopped = once(plugin, "exit").catch(() => {});

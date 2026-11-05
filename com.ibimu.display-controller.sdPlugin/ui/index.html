@@ -9,17 +9,25 @@
   <script src="inspector.js" defer></script>
 </head>
 <body>
-  <header><img src="../imgs/brightness.svg" alt=""><div><h1>Display Controller</h1><p>ダイヤルで、画面を心地よい明るさに。</p></div></header>
+  <header><img src="../imgs/brightness.svg" alt=""><div><h1>Display Controller</h1><p>ボタンでもダイヤルでも、心地よい明るさに。</p></div></header>
   <main>
     <label for="monitor">操作するディスプレイ</label>
     <select id="monitor"><option value="">読み込み中…</option></select>
     <button id="refresh" type="button">ディスプレイを再検出</button>
     <div class="reading"><span>現在の輝度</span><output id="brightness">—</output></div>
     <p id="status" role="status" aria-live="polite">ディスプレイを選択してください。</p>
-    <div class="field"><label for="step">通常の回転<span>1目盛りあたり</span></label><div><input id="step" type="number" min="1" max="20" value="2"><span>%</span></div></div>
-    <div class="field"><label for="pressStep">押しながら回転<span>大きく調整</span></label><div><input id="pressStep" type="number" min="1" max="25" value="10"><span>%</span></div></div>
-    <div class="field"><label for="preset">押下プリセット<span>回さずに押して離す</span></label><div><input id="preset" type="number" min="0" max="100" value="50"><span>%</span></div></div>
-    <footer>タッチストリップをタップすると再取得します。<br>他のアプリで変えた輝度も約3秒ごとに同期します。</footer>
+    <div id="buttonModeField" hidden>
+      <label for="buttonMode">ボタンを押したとき</label>
+      <select id="buttonMode">
+        <option value="increase">明るくする</option>
+        <option value="decrease">暗くする</option>
+        <option value="preset">プリセットに変更</option>
+      </select>
+    </div>
+    <div class="field" id="stepField"><label for="step"><span class="field-title" id="stepTitle">通常の回転</span><span id="stepHint">1目盛りあたり</span></label><div><input id="step" type="number" min="1" max="20" value="2"><span>%</span></div></div>
+    <div class="field" id="pressStepField"><label for="pressStep">押しながら回転<span>大きく調整</span></label><div><input id="pressStep" type="number" min="1" max="25" value="10"><span>%</span></div></div>
+    <div class="field" id="presetField"><label for="preset"><span class="field-title" id="presetTitle">押下プリセット</span><span id="presetHint">回さずに押して離す</span></label><div><input id="preset" type="number" min="0" max="100" value="50"><span>%</span></div></div>
+    <footer><span id="touchHint">タッチストリップをタップすると再取得します。<br></span>他のアプリで変えた輝度も約3秒ごとに同期します。</footer>
     <details><summary>接続できないとき</summary><p>モニターのDDC/CIを有効にし、ケーブル・スリープ・HDR設定を確認してください。接続端子を変更した場合は再検出して選び直してください。複製表示や一部のドックには対応していません。</p></details>
   </main>
 </body>

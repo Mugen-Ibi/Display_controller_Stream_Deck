@@ -1,6 +1,6 @@
 {
   "name": "display-controller-stream-deck",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "license": "MIT",
   "author": "Mugen Ibi",
@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/Mugen-Ibi/Display_controller_Stream_Deck#readme",
   "type": "module",
-  "description": "Stream Deck + hardware display brightness control for Windows",
+  "description": "Stream Deck button and dial hardware display brightness control for Windows",
   "scripts": {
     "build": "node scripts/build.mjs",
     "typecheck": "tsc --noEmit",
