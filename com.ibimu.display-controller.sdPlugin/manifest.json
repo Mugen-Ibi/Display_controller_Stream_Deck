@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+  "Name": "Display Controller",
+  "Version": "0.1.0.0",
+  "Author": "Mugen Ibi",
+  "Description": "Stream Deck +のダイヤルでDDC/CI対応ディスプレイの輝度を操作します。",
+  "UUID": "com.ibimu.display-controller",
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "6.6"
+  },
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Nodejs": {
+    "Version": "20"
+  },
+  "CodePath": "bin/plugin.js",
+  "Icon": "imgs/plugin",
+  "Category": "Display Controller",
+  "CategoryIcon": "imgs/category",
+  "Actions": [
+    {
+      "Name": "ディスプレイ輝度",
+      "UUID": "com.ibimu.display-controller.brightness",
+      "Icon": "imgs/category",
+      "Tooltip": "回転で輝度調整・押下でプリセット・タップで再取得",
+      "Controllers": [
+        "Encoder"
+      ],
+      "PropertyInspectorPath": "ui/index.html",
+      "Encoder": {
+        "layout": "$B1",
+        "TriggerDescription": {
+          "Rotate": "輝度を調整",
+          "Push": "プリセットへ戻す（標準50%）",
+          "Touch": "現在の輝度を再取得"
+        }
+      },
+      "States": [
+        {
+          "Image": "imgs/brightness",
+          "TitleAlignment": "top"
+        }
+      ],
+      "SupportedInMultiActions": false
+    }
+  ]
+}

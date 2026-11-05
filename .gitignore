@@ -1,0 +1,15 @@
+node_modules/
+native/target/
+com.ibimu.display-controller.sdPlugin/bin/
+com.ibimu.display-controller.sdPlugin/logs/
+dist/
+*.log
+com.ibimu.display-controller.sdPlugin/LICENSE
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+.DS_Store
+Thumbs.db

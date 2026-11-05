@@ -1,0 +1,47 @@
+{
+  "name": "display-controller-stream-deck",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "author": "Mugen Ibi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mugen-Ibi/Display_controller_Stream_Deck.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mugen-Ibi/Display_controller_Stream_Deck/issues"
+  },
+  "homepage": "https://github.com/Mugen-Ibi/Display_controller_Stream_Deck#readme",
+  "type": "module",
+  "description": "Stream Deck + hardware display brightness control for Windows",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "check": "npm run typecheck && npm test && cargo test --manifest-path native/Cargo.toml && cargo clippy --manifest-path native/Cargo.toml -- -D warnings",
+    "validate": "streamdeck validate com.ibimu.display-controller.sdPlugin",
+    "pack": "npm run build && npm run validate && streamdeck pack com.ibimu.display-controller.sdPlugin --output dist --force",
+    "diagnose": "node scripts/diagnose.mjs",
+    "verify:hardware": "tsx scripts/verify-hardware.ts"
+  },
+  "dependencies": {
+    "@elgato/streamdeck": "3.0.4",
+    "ws": "^8.22.1"
+  },
+  "devDependencies": {
+    "@elgato/cli": "1.10.4",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "^20.19.0",
+    "@types/ws": "^8.18.2",
+    "esbuild": "^0.25.0",
+    "playwright": "^1.64.1",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  },
+  "engines": {
+    "node": ">=20.5.1"
+  },
+  "overrides": {
+    "zod": "^4.6.6"
+  }
+}
