@@ -17,7 +17,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test tests/*.test.ts",
+    "test": "node scripts/test.mjs",
     "check": "npm run typecheck && npm test && cargo test --manifest-path native/Cargo.toml && cargo clippy --manifest-path native/Cargo.toml -- -D warnings",
     "validate": "streamdeck validate com.ibimu.display-controller.sdPlugin",
     "pack": "npm run build && npm run validate && streamdeck pack com.ibimu.display-controller.sdPlugin --output dist --force",
